@@ -1,5 +1,8 @@
 package org.elotech.desafio.repository;
 
-public interface PessoaRepository {
+import org.elotech.desafio.model.Pessoa;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PessoaRepository extends JpaRepository<Pessoa, Long>{
 
 }
