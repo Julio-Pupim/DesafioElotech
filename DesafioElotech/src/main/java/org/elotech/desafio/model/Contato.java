@@ -14,12 +14,14 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name="contato")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "pessoa")
 public class Contato implements Serializable{
 	
 	private static final long serialVersionUID = 8681104137432506922L;
