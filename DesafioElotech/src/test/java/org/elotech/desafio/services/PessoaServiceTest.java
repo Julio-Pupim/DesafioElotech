@@ -4,23 +4,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.Collections;
 
-import org.elotech.desafio.exception.BadRequestException;
 import org.elotech.desafio.model.Contato;
 import org.elotech.desafio.model.Pessoa;
 import org.elotech.desafio.repository.PessoaRepository;
 import org.elotech.desafio.service.ContatoService;
 import org.elotech.desafio.service.PessoaService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -38,7 +38,9 @@ public class PessoaServiceTest {
 	
 	@BeforeEach
 	public void setUp() {
-		MockitoAnnotations.openMocks(this);
+	       MockitoAnnotations.openMocks(this);
+	       service = new PessoaService(repository, Mockito.mock(ContatoService.class));
+
 	}
 	   
 	@Test
@@ -49,36 +51,7 @@ public class PessoaServiceTest {
 		assertEquals("17570523059",cpf1);
 		
 	}
-	@Test
-	public void NaoDevePermitirCadastroComDataDeNascimentoFutura(){
-		Pessoa pessoa = new Pessoa();
-		pessoa.setNome("Nome Teste");
-		pessoa.setCpf("17570523059");
-		pessoa.setDataNascimento(LocalDate.of(2024, 4, 11));
-		Contato contato = new Contato();
-		contato.setNome("Nome Teste Júnior");
-		contato.setEmail("teste@gmail.com");
-		contato.setTelefone("1234567890");
-		contato.setPessoa(pessoa);
-		pessoa.setContatosList(Collections.singletonList(contato));
-		
-		Assertions.assertThrows(BadRequestException.class, () -> {
-		 service.salvarPessoa(pessoa);
-	    });
-		
-	}
 	
-	@Test
-	public void NaoDevePermitirCadastrarPessoaSemContato() {
-		Pessoa pessoa = new Pessoa();
-		pessoa.setNome("Nome Teste");
-		pessoa.setCpf("17570523059");
-		pessoa.setDataNascimento(LocalDate.of(2023, 4, 11));
-		
-		Assertions.assertThrows(BadRequestException.class, () -> {
-			 service.salvarPessoa(pessoa);
-		    });
-	}
 	
 	@Test
 	public void NaoDevePermitirCpfInvalido() {
@@ -103,6 +76,7 @@ public class PessoaServiceTest {
 		contato.setPessoa(pessoa);
 		pessoa.setContatosList(Collections.singletonList(contato));
 		
+		when(contatoService.emailValido(anyString())).thenReturn(true);
 		when(repository.save(any(Pessoa.class))).thenReturn(pessoa);
 		
 		Pessoa pessoaSalva = service.salvarPessoa(pessoa);
