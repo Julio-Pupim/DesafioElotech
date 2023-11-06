@@ -8,13 +8,14 @@ import org.elotech.desafio.model.Contato;
 import org.elotech.desafio.repository.ContatoRepository;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
-
 @Service
-@AllArgsConstructor
 public class ContatoService {
 
-	private final ContatoRepository contatoRepository;
+    private final ContatoRepository contatoRepository;
+
+    public ContatoService(ContatoRepository contatoRepository) {
+        this.contatoRepository = contatoRepository;
+    }
 	
 	
 	   public Contato salvarContato (Contato contato) {
@@ -26,9 +27,7 @@ public class ContatoService {
 	        if (!emailValido(contato.getEmail())) {
 	            throw new BadRequestException("Email inválido");
 	        }
-	    	if(contato.getNome().isBlank() ||contato.getTelefone().isBlank() || contato.getEmail().isBlank()) {
-	            throw new BadRequestException("Campos em Brancos ou nulos não são permitidos nos Contatos!"); 
-			}
+
 	    }
 	    
 		    public Boolean emailValido(String email) {
