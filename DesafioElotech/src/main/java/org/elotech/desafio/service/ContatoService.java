@@ -3,7 +3,7 @@ package org.elotech.desafio.service;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+import org.elotech.desafio.exception.BadRequestException;
 import org.elotech.desafio.model.Contato;
 import org.elotech.desafio.repository.ContatoRepository;
 import org.springframework.stereotype.Service;
@@ -17,17 +17,17 @@ public class ContatoService {
 	private final ContatoRepository contatoRepository;
 	
 	
-	   public Contato salvar (Contato contato) {
+	   public Contato salvarContato (Contato contato) {
 	        validar(contato);
 	        return contatoRepository.save(contato);
 	    }
 
 	    public void validar(Contato contato) {
 	        if (!emailValido(contato.getEmail())) {
-	            throw new IllegalArgumentException("Email inválido");
+	            throw new BadRequestException("Email inválido");
 	        }
 	    	if(contato.getNome().isBlank() ||contato.getTelefone().isBlank() || contato.getEmail().isBlank()) {
-	            throw new IllegalArgumentException("Campos em Brancos ou nulos não são permitidos nos Contatos!"); 
+	            throw new BadRequestException("Campos em Brancos ou nulos não são permitidos nos Contatos!"); 
 			}
 	    }
 	    
