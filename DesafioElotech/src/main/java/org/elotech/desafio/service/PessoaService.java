@@ -1,22 +1,22 @@
 package org.elotech.desafio.service;
 
-import java.time.LocalDate;
-
 import org.elotech.desafio.exception.BadRequestException;
 import org.elotech.desafio.model.Contato;
 import org.elotech.desafio.model.Pessoa;
 import org.elotech.desafio.repository.PessoaRepository;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
-
 @Service
-@AllArgsConstructor
 public class PessoaService {
 	
-	private PessoaRepository repository;
+	private final PessoaRepository repository;
 	
-	private ContatoService contatoService;
+	private final ContatoService contatoService;
+	
+	public PessoaService(PessoaRepository repository, ContatoService contatoService) {
+		this.repository = repository;
+		this.contatoService = contatoService;
+	}
 	
 	public Pessoa salvarPessoa (Pessoa pessoa) {
 		pessoa.setCpf(limparCpf(pessoa.getCpf()));
@@ -31,21 +31,11 @@ public class PessoaService {
 	
 	
 	public void validar(Pessoa pessoa) {
-		if (pessoa.getDataNascimento().isAfter(LocalDate.now())) {
-            throw new BadRequestException("A data de nascimento não pode ser uma data futura");
-        }
 		
-		if(pessoa.getContatosList().isEmpty()) {
-            throw new BadRequestException("A pessoa deve possuir ao menos um contato");
-		}
 		
 		if (!cpfValido(pessoa.getCpf())) {
 			throw new BadRequestException("CPF inválido");
 		}
-		
-//		if(pessoa.getCpf().isBlank() || pessoa.getNome().isBlank() || pessoa.getDataNascimento().toString().isBlank() ) {
-//			throw new BadRequestException("Todos os campos de pessoa são obrigatórios");
-//		}
 		
 		for(Contato contato : pessoa.getContatosList()) {
 		    
@@ -55,6 +45,7 @@ public class PessoaService {
 			System.out.println("Contato" + contato);
 			System.out.println("Validating email: " + contato.getEmail());
 			if(!(contatoService.emailValido(contato.getEmail()))) {
+	            System.out.println("Email inválido: " + contato.getEmail());
 				throw new BadRequestException("Email inválido");
 			}	
 		}
