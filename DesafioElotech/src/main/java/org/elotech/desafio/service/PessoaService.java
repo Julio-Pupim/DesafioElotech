@@ -42,10 +42,7 @@ public class PessoaService {
 			if(contato.getNome().isBlank() ||contato.getTelefone().isBlank() || contato.getEmail().isBlank()) {
 	            throw new BadRequestException("Campos em Brancos ou nulos não são permitidos nos Contatos!"); 
 			}
-			System.out.println("Contato" + contato);
-			System.out.println("Validating email: " + contato.getEmail());
 			if(!(contatoService.emailValido(contato.getEmail()))) {
-	            System.out.println("Email inválido: " + contato.getEmail());
 				throw new BadRequestException("Email inválido");
 			}	
 		}
