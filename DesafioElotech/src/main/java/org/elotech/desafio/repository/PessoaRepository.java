@@ -9,4 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PessoaRepository extends JpaRepository<Pessoa, Long>{
 	
 	Page<Pessoa> findByNome(String nome, Pageable pageable);
+
+	Page<Pessoa> findAll(Pageable pageable);
+
 }
