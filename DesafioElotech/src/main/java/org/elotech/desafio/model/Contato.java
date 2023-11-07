@@ -2,6 +2,8 @@ package org.elotech.desafio.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,6 +40,7 @@ public class Contato implements Serializable{
 	
 	private String email;
 	
+	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "idkey_pessoa",referencedColumnName = "idkey")
 	private Pessoa pessoa;
