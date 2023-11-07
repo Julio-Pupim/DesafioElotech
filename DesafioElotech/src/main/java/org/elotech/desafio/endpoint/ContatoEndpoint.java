@@ -40,11 +40,14 @@ public class ContatoEndpoint {
 			  											@RequestParam(defaultValue = "10") int size){
 		
 		Pageable pageable = PageRequest.of(page, size);
+		Page<Contato> contatoPage;
 		
-		Page<Contato> contatoPage= repository.findByNome(nome, pageable);
-		
+		if(nome.isEmpty()) {
+			contatoPage = repository.findAll(pageable);
+		}else {
+			contatoPage = repository.findByNome(nome, pageable);
+		}
 		if(contatoPage.isEmpty()) {
-			
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(contatoPage);
 		}
 		
