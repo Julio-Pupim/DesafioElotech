@@ -1,5 +1,6 @@
 package org.elotech.desafio.endpoint;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.elotech.desafio.dto.PessoaRecordDTO;
@@ -39,9 +40,15 @@ public class PessoaEndpoint {
 													  @RequestParam(defaultValue = "0") int page,
 													  @RequestParam(defaultValue = "10") int size){
 		Pageable pageable = PageRequest.of(page, size);
-		Page<Pessoa> pessoaPage= repository.findByNome(nome, pageable);
+		Page<Pessoa> pessoaPage;
+		
+		if(nome.isEmpty()) {
+			pessoaPage = repository.findAll(pageable);
+		} else {
+			pessoaPage = repository.findByNome(nome, pageable);
+		}
+		
 		if(pessoaPage.isEmpty()) {
-			
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pessoaPage);
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(pessoaPage);
@@ -73,7 +80,14 @@ public class PessoaEndpoint {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pessoa não encontrada");
 		}
 		Pessoa pessoa = pessoaOptional.get();
-		BeanUtils.copyProperties(pessoaRecord,pessoa);
+	
+		pessoa.setContatosList(new ArrayList<>(pessoa.getContatosList()));
+		pessoa.getContatosList().clear();
+
+		pessoa.getContatosList().addAll(pessoaRecord.contatosList());
+
+		BeanUtils.copyProperties(pessoaRecord, pessoa, "contatosList");
+
 		Pessoa pessoaSalva = service.salvarPessoa(pessoa);
 		return ResponseEntity.status(HttpStatus.OK).body(pessoaSalva);
 	}	
