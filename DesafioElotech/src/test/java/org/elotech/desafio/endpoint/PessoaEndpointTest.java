@@ -65,9 +65,9 @@ public class PessoaEndpointTest {
 	}
 	
 	@Test
-	public void buscarPessoasTest() throws Exception {
+	public void buscarPessoasComNomeTest() throws Exception {
 		
-		String nome = "";
+		String nome = "nome teste";
 		int page = 0;
 		int size = 10;
 		Pageable pageable = PageRequest.of(page, size);
@@ -86,13 +86,54 @@ public class PessoaEndpointTest {
 
 	}
 	@Test
-	public void buscarPessoasSemConteudoTest() throws Exception {
+	public void buscarPessoasSemNomeTest() throws Exception {
+		
+		String nome = "";
+		int page = 0;
+		int size = 10;
+		Pageable pageable = PageRequest.of(page, size);
+		List<Pessoa> pessoas = Arrays.asList(pessoa);
+		Page<Pessoa> pessoaPage = new PageImpl<Pessoa>(pessoas, pageable, pessoas.size());
+
+		when(repository.findAll(pageable)).thenReturn(pessoaPage);
+	
+		mockMvc.perform(get("/pessoas")
+				.param("nome", nome)
+				.param("page", String.valueOf(page))
+				.param("size", String.valueOf(size)))
+				.andExpect(status().isOk());
+		
+		verify(repository, times(1)).findAll(pageable);
+	}
+	@Test
+	public void buscarPessoasSemConteudoSemNomeTest() throws Exception {
 		
 		String nome = "";
 		int page = 0;
 		int size = 10;
 		Pageable pageable = PageRequest.of(page, size);
 		Page<Pessoa> pessoaPage = Page.empty(pageable);
+
+		when(repository.findAll(pageable)).thenReturn(pessoaPage);
+		
+		mockMvc.perform(get ("/pessoas")
+	            .param("nome",nome)
+	            .param("page",String.valueOf(page))
+	            .param("size",String.valueOf(size)))
+	            .andExpect(status().isNoContent());
+
+		verify(repository, times(1)).findAll(pageable);
+
+	}
+	@Test
+	public void buscarPessoasSemConteudoComNomeTest() throws Exception {
+		
+		String nome = "nome teste";
+		int page = 0;
+		int size = 10;
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Pessoa> pessoaPage = Page.empty(pageable);
+
 		
 		when(repository.findByNome(nome, pageable)).thenReturn(pessoaPage);
 		
